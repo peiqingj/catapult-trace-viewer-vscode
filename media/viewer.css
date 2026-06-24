@@ -1,0 +1,67 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+  color: #222;
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+#trace-viewer {
+  display: flex;
+  flex: 1 1 auto;
+  width: 100vw;
+  height: 100vh;
+  min-width: 0;
+  min-height: 0;
+  background: #fff;
+  color: #222;
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+track-view-container,
+track-view-container > * {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+#catapult-import-root {
+  display: none !important;
+}
+
+#status {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 10000;
+  max-width: min(520px, calc(100vw - 24px));
+  padding: 8px 10px;
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.35));
+  background: var(--vscode-editorWidget-background, #252526);
+  color: var(--vscode-editorWidget-foreground, #cccccc);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+body.ready #status {
+  display: none;
+}
+
+body.error #status {
+  border-color: var(--vscode-inputValidation-errorBorder, #f14c4c);
+  background: var(--vscode-inputValidation-errorBackground, #5a1d1d);
+  color: var(--vscode-inputValidation-errorForeground, #ffffff);
+}

@@ -1,0 +1,88 @@
+{
+  "name": "catapult-trace-viewer-vscode",
+  "displayName": "Catapult Trace Viewer",
+  "description": "Open Chrome Catapult trace files directly inside VS Code.",
+  "version": "0.0.1",
+  "publisher": "peiqingj",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/peiqingj/catapult-trace-viewer-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/peiqingj/catapult-trace-viewer-vscode/issues"
+  },
+  "homepage": "https://github.com/peiqingj/catapult-trace-viewer-vscode#readme",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Visualization"
+  ],
+  "keywords": [
+    "trace",
+    "tracing",
+    "catapult",
+    "chrome",
+    "chrome tracing",
+    "performance",
+    "profiling",
+    "visualization"
+  ],
+  "galleryBanner": {
+    "color": "#ffffff",
+    "theme": "light"
+  },
+  "preview": true,
+  "pricing": "Free",
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "catapultTraceViewer.open",
+        "title": "Open with Catapult Trace Viewer"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "catapultTraceViewer.open",
+          "when": "resourceFilename =~ /\\.(json|trace|ctrace)$/",
+          "group": "navigation"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "catapultTraceViewer.traceViewer",
+        "displayName": "Catapult Trace Viewer",
+        "selector": [
+          {
+            "filenamePattern": "*.json"
+          },
+          {
+            "filenamePattern": "*.trace"
+          },
+          {
+            "filenamePattern": "*.ctrace"
+          }
+        ],
+        "priority": "option"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "package": "vsce package --out ${npm_package_name}-${npm_package_version}.vsix",
+    "install": "node ./scripts/install-extension.js",
+    "publish:marketplace": "vsce publish",
+    "watch": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.0",
+    "@types/node": "^22.15.34",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.8.3"
+  }
+}
