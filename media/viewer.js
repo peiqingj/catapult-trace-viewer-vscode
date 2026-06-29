@@ -285,12 +285,87 @@
   async function importTrace(viewer, traceText) {
     setStatus(`Importing ${traceName}...`);
 
+    const importableTraceText = normalizeCpuProfileIds(traceText);
+
     const model = new window.tr.Model();
     const importer = new window.tr.importer.Import(model);
-    await importer.importTracesWithProgressDialog([traceText]);
+    await importer.importTracesWithProgressDialog([importableTraceText]);
 
     viewer.model = model;
     setReady();
+  }
+
+  function normalizeCpuProfileIds(traceText) {
+    let trace;
+    try {
+      trace = JSON.parse(traceText);
+    } catch (_error) {
+      return traceText;
+    }
+
+    const events = getTraceEvents(trace);
+    if (!events) {
+      return traceText;
+    }
+
+    const profilePidsById = new Map();
+    for (const event of events) {
+      if (!isCpuProfileEvent(event)) {
+        continue;
+      }
+
+      let pids = profilePidsById.get(event.id);
+      if (!pids) {
+        pids = new Set();
+        profilePidsById.set(event.id, pids);
+      }
+
+      pids.add(event.pid);
+    }
+
+    const conflictingProfileIds = new Set();
+    for (const [id, pids] of profilePidsById) {
+      if (pids.size > 1) {
+        conflictingProfileIds.add(id);
+      }
+    }
+
+    if (conflictingProfileIds.size === 0) {
+      return traceText;
+    }
+
+    let didNormalize = false;
+    for (const event of events) {
+      if (!isCpuProfileEvent(event) || !conflictingProfileIds.has(event.id)) {
+        continue;
+      }
+
+      event.id = `${event.id}:pid${event.pid}`;
+      didNormalize = true;
+    }
+
+    return didNormalize ? JSON.stringify(trace) : traceText;
+  }
+
+  function getTraceEvents(trace) {
+    if (Array.isArray(trace)) {
+      return trace;
+    }
+
+    if (trace && Array.isArray(trace.traceEvents)) {
+      return trace.traceEvents;
+    }
+
+    return undefined;
+  }
+
+  function isCpuProfileEvent(event) {
+    const data = event && event.args && event.args.data;
+    if (!data || event.id === undefined || event.id === null) {
+      return false;
+    }
+
+    return data.cpuProfile !== undefined || (event.name === 'Profile' && data.startTime !== undefined);
   }
 
   async function start() {
