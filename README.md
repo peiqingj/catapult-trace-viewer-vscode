@@ -1,65 +1,50 @@
 # Catapult Trace Viewer
 
-Open Chrome Catapult trace files directly inside VS Code using the legacy Catapult Trace Viewer UI.
+Open Chrome Catapult trace files directly inside VS Code with the classic Catapult timeline UI.
 
-This extension is for people who prefer the old `chrome://tracing` / Catapult timeline experience over newer trace viewers for compatible trace files.
+This extension is for people who still use compatible `chrome://tracing` / Catapult trace files and want to inspect them without leaving VS Code.
 
 ## Features
 
 - Open `.json`, `.trace`, and `.ctrace` files with **Open With... > Catapult Trace Viewer**.
-- Use a read-only custom editor so the trace opens inside a normal VS Code editor tab.
-- Load the legacy Catapult viewer locally from vendored assets, without sending trace data to a remote web app.
-- Preserve the classic light Catapult UI even when VS Code is using a dark theme.
+- Right-click a supported trace file and choose **Open with Catapult Trace Viewer** from the Explorer context menu.
+- View traces in a normal VS Code editor tab using a read-only custom editor.
+- Use the legacy Catapult viewer locally from vendored assets, without uploading trace data to a remote web app.
+- Keep the classic light Catapult UI even when VS Code uses a dark theme.
 
-## Development
+## How to Use
 
-```sh
-npm install
-npm run compile
-```
+1. Open a folder that contains a Catapult-compatible trace file.
+2. Right-click a `.json`, `.trace`, or `.ctrace` file in the Explorer.
+3. Select **Open with Catapult Trace Viewer**.
 
-Then press F5 and open `trace.json` in the Extension Development Host with **Open With... > Catapult Trace Viewer**.
+![Open a trace with Catapult Trace Viewer](docs/resources/open-with-catapult-trace-viewer.gif)
 
-You can also right-click a `.json`, `.trace`, or `.ctrace` file and run **Open with Catapult Trace Viewer**.
+You can also use VS Code's **Open With...** command and choose **Catapult Trace Viewer**.
 
-To build and install the local VSIX:
+## Supported Files
 
-```sh
-npm run package
-npm run install
-```
+This extension registers for:
 
-`npm run package` writes `catapult-trace-viewer-vscode-0.0.1.vsix`. `npm run install` rebuilds that VSIX and installs it with `code --install-extension --force`.
+- `.json`
+- `.trace`
+- `.ctrace`
 
-The install helper skips ordinary dependency installs, so `npm install` will not reinstall the extension.
+The file still needs to contain trace data that the legacy Catapult viewer can understand.
 
-To publish to the VS Code Marketplace after logging in with `vsce login peiqingj`:
+## Privacy
 
-```sh
-npm run publish:marketplace
-```
+Trace files are loaded into a local VS Code webview. The bundled viewer assets are served from this extension, so trace data is not sent to an external viewer service.
 
-## Release
+## Limitations
 
-The repository has two GitHub workflows:
+- Very large traces may use a lot of webview renderer memory.
+- The viewer is based on Chrome's legacy Catapult tracing UI, so some newer trace formats may not render correctly.
+- The bundled viewer depends on older WebComponents behavior and a compatibility polyfill.
 
-- **CI** builds and packages the extension on pushes and pull requests.
-- **Release VSIX** creates a GitHub release and uploads the packaged `.vsix` when a `v*` tag is pushed, or when run manually from the Actions tab.
+## Development and Release
 
-For a local release package only:
-
-```sh
-npm run package
-```
-
-## Notes
-
-This extension vendors the legacy Catapult viewer assets used by Chrome's old tracing UI. The viewer depends on deprecated WebComponents V0 behavior and a polyfill, so some edge cases may behave differently from old Chrome builds.
-
-Current limitations:
-
-- Large traces may consume a lot of webview renderer memory.
-- The CSP is intentionally relaxed for the legacy Catapult bundle.
+Developer setup, local packaging, and release notes live in [docs/development.md](docs/development.md).
 
 ## Third Party Notices
 
